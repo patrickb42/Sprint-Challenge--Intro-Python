@@ -1,6 +1,19 @@
-# Create a class to hold a city location. Call the class "City". It should have
-# fields for name, lat and lon (representing latitude and longitude).
+class City:
+    def __init__(self, name: str, lat: float, lon: float):
+        super().__init__()
+        self.name = name
+        self.lat = lat
+        self.lon = lon
 
+    def __repr__(self):
+        return f"City('{self.name}', '{self.lat}', '{self.lon}')"
+
+    def __str__(self):
+        return f"name: {self.name}, lat: {self.lat}, lon: {self.lon}"
+
+    def __eq__(self, other: 'City'):
+      return self.name == other.name and self.lat == other.lat and self.lon == other.lon
+      # return str(self) == str(other)
 
 # We have a collection of US cities with population over 750,000 stored in the
 # file "cities.csv". (CSV stands for "comma-separated values".)
@@ -14,16 +27,23 @@
 #
 # Note that the first line of the CSV is header that describes the fields--this
 # should not be loaded into a City object.
-cities = []
 
-def cityreader(cities=[]):
+import csv
+from pyrsistent import pvector
+def cityreader(cities=None):
+    cities = pvector() if cities is None else cities
+    with open('cities.csv', 'r') as cities_file:
+        cities_reader = csv.reader(cities_file, delimiter=',')
+        next(cities_reader)
+        for row in cities_reader:
+            cities = cities.append(City(name=row[0], lat=float(row[3]), lon=float(row[4])))
   # TODO Implement the functionality to read from the 'cities.csv' file
   # For each city record, create a new City instance and add it to the 
   # `cities` list
-    
+
     return cities
 
-cityreader(cities)
+cities = cityreader()
 
 # Print the list of cities (name, lat, lon), 1 record per line.
 for c in cities:
@@ -60,7 +80,7 @@ for c in cities:
 
 # TODO Get latitude and longitude values from the user
 
-def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
+def cityreader_stretch(lat1, lon1, lat2, lon2, cities=None):
   # within will hold the cities that fall within the specified region
   within = []
 
